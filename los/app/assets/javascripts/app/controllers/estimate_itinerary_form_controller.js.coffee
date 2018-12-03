@@ -241,7 +241,12 @@ angular.module('los').controller 'EstimateItineraryFormController', [
       for itinerary_daily in @estimate.itinerary_dailies
         itinerary_daily.tour_leader_count = @estimate.tour_leader_count
 
-
+	# MOR: Get local timezone hours
+    getTimeZoneHoursClient: () ->
+      today = new Date()
+      offset = -(today.getTimezoneOffset()/60)
+      return offset
+      
     # AngularJSのバグ
     fixDateUtcToLocal: () ->
       # in_flight_date
@@ -253,7 +258,13 @@ angular.module('los').controller 'EstimateItineraryFormController', [
       out_flight_date = new Date(@estimate.out_flight_date)
       out_flight_date.setHours(out_flight_date.getHours() + 9)
       @estimate.out_flight_date = out_flight_date
-
+		
+	  # japan_arv_date_from
+	  iHours = @getTimeZoneHoursClient()
+      japan_arv_date_from = new Date(@estimate.estimate_tours[0].japan_arv_date_from)
+      japan_arv_date_from.setHours(japan_arv_date_from.getHours() + iHours)
+      @estimate.estimate_tours[0].japan_arv_date_from = japan_arv_date_from
+      
     # 送信処理の復活
     turnOnSubmit: () ->
       $('.itinerary-submit').prop('disabled', false)
